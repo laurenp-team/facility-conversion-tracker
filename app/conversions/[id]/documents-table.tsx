@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { DocumentCategory, DocumentRow, DocumentStatus } from "@/lib/types";
+import { DOCUMENT_NAME_OPTIONS, OTHER_OPTION } from "@/lib/document-options";
 
 const STATUSES: DocumentStatus[] = ["not_sent", "sent", "received", "approved"];
 const CATEGORIES: DocumentCategory[] = ["financial", "site_build"];
@@ -16,10 +17,19 @@ export function DocumentsTable({
 }) {
   const router = useRouter();
   const [showAddForm, setShowAddForm] = useState(false);
-  const [name, setName] = useState("");
   const [category, setCategory] = useState<DocumentCategory>("financial");
+  const [selectedName, setSelectedName] = useState<string>(
+    DOCUMENT_NAME_OPTIONS.financial[0]
+  );
+  const [customName, setCustomName] = useState("");
   const [addSubmitting, setAddSubmitting] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+
+  function handleCategoryChange(next: DocumentCategory) {
+    setCategory(next);
+    setSelectedName(DOCUMENT_NAME_OPTIONS[next][0]);
+    setCustomName("");
+  }
 
   // Draft status per document row, so the "Update status" button submits
   // whatever the select is currently set to for that row.
@@ -31,6 +41,15 @@ export function DocumentsTable({
 
   async function handleAddDocument(e: FormEvent) {
     e.preventDefault();
+
+    const name =
+      selectedName === OTHER_OPTION ? customName.trim() : selectedName;
+
+    if (!name) {
+      setAddError("Enter a name for the document");
+      return;
+    }
+
     setAddSubmitting(true);
     setAddError(null);
 
@@ -48,8 +67,7 @@ export function DocumentsTable({
       return;
     }
 
-    setName("");
-    setCategory("financial");
+    handleCategoryChange("financial");
     setShowAddForm(false);
     router.refresh();
   }
@@ -140,19 +158,12 @@ export function DocumentsTable({
       {showAddForm && (
         <form onSubmit={handleAddDocument} className="inline-form">
           <label>
-            Name
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </label>
-          <label>
             Category
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value as DocumentCategory)}
+              onChange={(e) =>
+                handleCategoryChange(e.target.value as DocumentCategory)
+              }
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -161,6 +172,31 @@ export function DocumentsTable({
               ))}
             </select>
           </label>
+          <label>
+            Name
+            <select
+              value={selectedName}
+              onChange={(e) => setSelectedName(e.target.value)}
+            >
+              {DOCUMENT_NAME_OPTIONS[category].map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+              <option value={OTHER_OPTION}>Other…</option>
+            </select>
+          </label>
+          {selectedName === OTHER_OPTION && (
+            <label>
+              Other name
+              <input
+                type="text"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                required
+              />
+            </label>
+          )}
           <button type="submit" disabled={addSubmitting}>
             {addSubmitting ? "Adding…" : "Save document"}
           </button>
