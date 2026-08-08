@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import type { Conversion, Issue } from "@/lib/types";
+import type { Conversion, Issue, IssueComment } from "@/lib/types";
 import { IssueForm } from "./issue-form";
 import { IssuesTable } from "./issues-table";
 
@@ -30,6 +30,22 @@ export default async function IssueLogPage({
     notFound();
   }
 
+  const issueIds = (issues ?? []).map((issue) => issue.id);
+  const commentsByIssueId: Record<string, IssueComment[]> = {};
+
+  if (issueIds.length > 0) {
+    const { data: comments } = await supabase
+      .from("issue_comments")
+      .select("*")
+      .in("issue_id", issueIds)
+      .order("created_at", { ascending: true })
+      .returns<IssueComment[]>();
+
+    for (const comment of comments ?? []) {
+      (commentsByIssueId[comment.issue_id] ??= []).push(comment);
+    }
+  }
+
   return (
     <main className="page">
       <p>
@@ -43,7 +59,12 @@ export default async function IssueLogPage({
       {issuesResult.error && (
         <p className="error">Failed to load issues: {issuesResult.error.message}</p>
       )}
-      {!issuesResult.error && <IssuesTable issues={issues ?? []} />}
+      {!issuesResult.error && (
+        <IssuesTable
+          issues={issues ?? []}
+          commentsByIssueId={commentsByIssueId}
+        />
+      )}
     </main>
   );
 }

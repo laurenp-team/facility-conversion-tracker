@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Issue } from "@/lib/types";
+import type { Issue, IssueComment } from "@/lib/types";
+import { IssueComments } from "./issue-comments";
 
-export function IssuesTable({ issues }: { issues: Issue[] }) {
+export function IssuesTable({
+  issues,
+  commentsByIssueId,
+}: {
+  issues: Issue[];
+  commentsByIssueId: Record<string, IssueComment[]>;
+}) {
   const router = useRouter();
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,46 +38,39 @@ export function IssuesTable({ issues }: { issues: Issue[] }) {
   }
 
   return (
-    <div>
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Classification</th>
-            <th>Date logged</th>
-            <th>Resolved</th>
-            <th>Date resolved</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {issues.map((issue) => (
-            <tr key={issue.id}>
-              <td>{issue.description}</td>
-              <td>{issue.classification ?? "pending"}</td>
-              <td>{new Date(issue.date_logged).toLocaleString()}</td>
-              <td>{issue.resolved ? "Yes" : "No"}</td>
-              <td>
-                {issue.date_resolved
-                  ? new Date(issue.date_resolved).toLocaleString()
-                  : "—"}
-              </td>
-              <td>
-                {!issue.resolved && (
-                  <button
-                    type="button"
-                    onClick={() => handleMarkResolved(issue.id)}
-                    disabled={resolvingId === issue.id}
-                  >
-                    {resolvingId === issue.id ? "Saving…" : "Mark resolved"}
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="issue-list">
       {error && <p className="error">{error}</p>}
+      {issues.map((issue) => (
+        <div key={issue.id} className="issue-card">
+          <p className="issue-description">{issue.description}</p>
+          <div className="issue-meta">
+            <span>Classification: {issue.classification ?? "pending"}</span>
+            <span>Logged: {new Date(issue.date_logged).toLocaleString()}</span>
+            <span>Resolved: {issue.resolved ? "Yes" : "No"}</span>
+            <span>
+              Resolved on:{" "}
+              {issue.date_resolved
+                ? new Date(issue.date_resolved).toLocaleString()
+                : "—"}
+            </span>
+            {!issue.resolved && (
+              <button
+                type="button"
+                onClick={() => handleMarkResolved(issue.id)}
+                disabled={resolvingId === issue.id}
+              >
+                {resolvingId === issue.id ? "Saving…" : "Mark resolved"}
+              </button>
+            )}
+          </div>
+
+          <h3>Comments</h3>
+          <IssueComments
+            issueId={issue.id}
+            comments={commentsByIssueId[issue.id] ?? []}
+          />
+        </div>
+      ))}
     </div>
   );
 }

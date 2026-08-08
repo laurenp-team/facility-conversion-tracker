@@ -28,3 +28,10 @@ export interface Issue {
   resolved: boolean;
   date_resolved: string | null;
 }
+
+export interface IssueComment {
+  id: string;
+  issue_id: string;
+  comment: string;
+  created_at: string;
+}
