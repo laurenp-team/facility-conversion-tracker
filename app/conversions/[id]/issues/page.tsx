@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Conversion, Issue } from "@/lib/types";
 import { IssueForm } from "./issue-form";
+import { IssuesTable } from "./issues-table";
 
 export const dynamic = "force-dynamic";
 
@@ -42,37 +43,7 @@ export default async function IssueLogPage({
       {issuesResult.error && (
         <p className="error">Failed to load issues: {issuesResult.error.message}</p>
       )}
-      {!issuesResult.error && (!issues || issues.length === 0) && (
-        <p>No issues logged yet.</p>
-      )}
-      {!issuesResult.error && issues && issues.length > 0 && (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>Classification</th>
-              <th>Date logged</th>
-              <th>Resolved</th>
-              <th>Date resolved</th>
-            </tr>
-          </thead>
-          <tbody>
-            {issues.map((issue) => (
-              <tr key={issue.id}>
-                <td>{issue.description}</td>
-                <td>{issue.classification ?? "pending"}</td>
-                <td>{new Date(issue.date_logged).toLocaleString()}</td>
-                <td>{issue.resolved ? "Yes" : "No"}</td>
-                <td>
-                  {issue.date_resolved
-                    ? new Date(issue.date_resolved).toLocaleString()
-                    : "—"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {!issuesResult.error && <IssuesTable issues={issues ?? []} />}
     </main>
   );
 }
