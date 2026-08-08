@@ -43,10 +43,17 @@ export function IssuesTable({
     <div className="issue-list">
       {error && <p className="error">{error}</p>}
       {issues.map((issue) => (
-        <div key={issue.id} className="issue-card">
+        <div
+          key={issue.id}
+          className={`issue-card${issue.resolved ? " resolved" : ""}`}
+        >
           <p className="issue-description">{issue.description}</p>
           <div className="issue-meta">
-            <span>Classification: {issue.classification ?? "pending"}</span>
+            <span
+              className={`badge badge-${issue.classification ?? "pending"}`}
+            >
+              {issue.classification ?? "pending"}
+            </span>
             <span>Logged: {new Date(issue.date_logged).toLocaleString()}</span>
             <span>Resolved: {issue.resolved ? "Yes" : "No"}</span>
             <span>

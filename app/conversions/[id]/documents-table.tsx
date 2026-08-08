@@ -116,7 +116,9 @@ export function DocumentsTable({
             <tr key={doc.id}>
               <td>{doc.name}</td>
               <td>{doc.category}</td>
-              <td>{doc.status}</td>
+              <td>
+                <span className={`badge badge-${doc.status}`}>{doc.status}</span>
+              </td>
               <td>{doc.date_sent ?? "—"}</td>
               <td>{doc.date_last_reminded ?? "—"}</td>
               <td className="row-actions">

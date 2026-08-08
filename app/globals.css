@@ -224,3 +224,39 @@ button:disabled {
 .comment-form input {
   flex: 1;
 }
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.badge-resolvable_onsite,
+.badge-approved {
+  background: #1f7a3d;
+}
+
+.badge-needs_escalation {
+  background: #b3401f;
+}
+
+.badge-not_sent,
+.badge-pending {
+  background: #666;
+}
+
+.badge-sent {
+  background: #b8860b;
+}
+
+.badge-received {
+  background: #2563a8;
+}
+
+.issue-card.resolved {
+  opacity: 0.6;
+}
