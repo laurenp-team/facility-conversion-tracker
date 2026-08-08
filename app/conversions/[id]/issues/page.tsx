@@ -55,15 +55,25 @@ export default async function IssueLogPage({
 
       <IssueForm conversionId={id} />
 
-      <h2>Logged issues</h2>
       {issuesResult.error && (
         <p className="error">Failed to load issues: {issuesResult.error.message}</p>
       )}
       {!issuesResult.error && (
-        <IssuesTable
-          issues={issues ?? []}
-          commentsByIssueId={commentsByIssueId}
-        />
+        <>
+          <h2>Open issues</h2>
+          <IssuesTable
+            issues={(issues ?? []).filter((issue) => !issue.resolved)}
+            commentsByIssueId={commentsByIssueId}
+            emptyMessage="No open issues."
+          />
+
+          <h2>Resolved issues</h2>
+          <IssuesTable
+            issues={(issues ?? []).filter((issue) => issue.resolved)}
+            commentsByIssueId={commentsByIssueId}
+            emptyMessage="No resolved issues yet."
+          />
+        </>
       )}
     </main>
   );

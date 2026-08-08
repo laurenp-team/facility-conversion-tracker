@@ -8,9 +8,11 @@ import { IssueComments } from "./issue-comments";
 export function IssuesTable({
   issues,
   commentsByIssueId,
+  emptyMessage = "No issues logged yet.",
 }: {
   issues: Issue[];
   commentsByIssueId: Record<string, IssueComment[]>;
+  emptyMessage?: string;
 }) {
   const router = useRouter();
   const [resolvingId, setResolvingId] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export function IssuesTable({
   }
 
   if (issues.length === 0) {
-    return <p>No issues logged yet.</p>;
+    return <p>{emptyMessage}</p>;
   }
 
   return (
