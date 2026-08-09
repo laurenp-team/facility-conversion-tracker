@@ -48,6 +48,14 @@ function parseDateOnly(dateStr: string): Date {
   return new Date(Date.UTC(y, m - 1, d));
 }
 
+// date_last_reminded/date_sent are now full timestamps (see migration 0003);
+// truncate to the UTC date for the day-based window/cooldown math, which is
+// unaffected by the added time precision.
+function toUTCDateOnlyFromTimestamp(ts: string): Date {
+  const d = new Date(ts);
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
 function toDateOnlyString(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
@@ -100,6 +108,7 @@ function buildEmailBody(
 export async function GET() {
   const today = todayUTC();
   const todayStr = toDateOnlyString(today);
+  const nowIso = new Date().toISOString();
 
   const { data: documents, error } = await supabase
     .from("documents")
@@ -125,7 +134,8 @@ export async function GET() {
     const daysUntilGoLive = daysBetween(today, parseDateOnly(conversion.go_live_date));
     const dueForReminder =
       doc.date_last_reminded === null ||
-      daysBetween(parseDateOnly(doc.date_last_reminded), today) > REMINDER_COOLDOWN_DAYS;
+      daysBetween(toUTCDateOnlyFromTimestamp(doc.date_last_reminded), today) >
+        REMINDER_COOLDOWN_DAYS;
     const entry: ActionEntry = {
       facilityName: conversion.facility_name,
       documentName: doc.name,
@@ -137,7 +147,7 @@ export async function GET() {
       if (daysUntilGoLive <= FINANCIAL_WINDOW_DAYS && dueForReminder) {
         const { error: updateError } = await supabase
           .from("documents")
-          .update({ date_last_reminded: todayStr })
+          .update({ date_last_reminded: nowIso })
           .eq("id", doc.id);
         if (!updateError) {
           remindersSent.push(entry);
@@ -157,7 +167,7 @@ export async function GET() {
       if (daysUntilGoLive <= SITE_BUILD_SEND_WINDOW_DAYS && wasNotSent) {
         const { error: updateError } = await supabase
           .from("documents")
-          .update({ status: "sent", date_sent: todayStr })
+          .update({ status: "sent", date_sent: nowIso })
           .eq("id", doc.id);
         if (!updateError) {
           markedSent.push(entry);
@@ -170,7 +180,7 @@ export async function GET() {
       ) {
         const { error: updateError } = await supabase
           .from("documents")
-          .update({ date_last_reminded: todayStr })
+          .update({ date_last_reminded: nowIso })
           .eq("id", doc.id);
         if (!updateError) {
           remindersSent.push(entry);

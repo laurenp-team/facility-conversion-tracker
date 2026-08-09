@@ -8,12 +8,27 @@ import { DOCUMENT_NAME_OPTIONS, OTHER_OPTION } from "@/lib/document-options";
 const STATUSES: DocumentStatus[] = ["not_sent", "sent", "received", "approved"];
 const CATEGORIES: DocumentCategory[] = ["financial", "site_build"];
 
+// Past the go-live date and still not received/approved — flagged visually
+// so it's obvious at a glance without reading every row.
+function isOverdue(doc: DocumentRow, goLiveDate: string): boolean {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  return (
+    goLiveDate < todayStr && doc.status !== "received" && doc.status !== "approved"
+  );
+}
+
+function formatTimestamp(value: string | null): string {
+  return value ? new Date(value).toLocaleString() : "—";
+}
+
 export function DocumentsTable({
   conversionId,
   initialDocuments,
+  goLiveDate,
 }: {
   conversionId: string;
   initialDocuments: DocumentRow[];
+  goLiveDate: string;
 }) {
   const router = useRouter();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -113,14 +128,17 @@ export function DocumentsTable({
             </tr>
           )}
           {initialDocuments.map((doc) => (
-            <tr key={doc.id}>
+            <tr
+              key={doc.id}
+              className={isOverdue(doc, goLiveDate) ? "overdue-row" : undefined}
+            >
               <td>{doc.name}</td>
               <td>{doc.category}</td>
               <td>
                 <span className={`badge badge-${doc.status}`}>{doc.status}</span>
               </td>
-              <td>{doc.date_sent ?? "—"}</td>
-              <td>{doc.date_last_reminded ?? "—"}</td>
+              <td>{formatTimestamp(doc.date_sent)}</td>
+              <td>{formatTimestamp(doc.date_last_reminded)}</td>
               <td className="row-actions">
                 <select
                   value={statusDrafts[doc.id]}

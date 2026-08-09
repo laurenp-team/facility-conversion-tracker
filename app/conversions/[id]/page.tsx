@@ -45,7 +45,11 @@ export default async function ConversionRecordPage({
           Failed to load documents: {documentsResult.error.message}
         </p>
       )}
-      <DocumentsTable conversionId={id} initialDocuments={documents ?? []} />
+      <DocumentsTable
+        conversionId={id}
+        initialDocuments={documents ?? []}
+        goLiveDate={conversion.go_live_date}
+      />
 
       <p className="section-nav">
         <Link href={`/conversions/${id}/issues`}>Go to Issue Log &rarr;</Link>

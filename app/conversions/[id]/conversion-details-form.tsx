@@ -4,6 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Conversion } from "@/lib/types";
 
+function describeGoLiveOffset(goLiveDate: string): string {
+  const today = new Date();
+  const todayUTC = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  const [y, m, d] = goLiveDate.split("-").map(Number);
+  const goLiveUTC = Date.UTC(y, m - 1, d);
+  const days = Math.round((goLiveUTC - todayUTC) / 86_400_000);
+
+  if (days === 0) return "Go-live is today";
+  if (days > 0) return `Go-live in ${days} day${days === 1 ? "" : "s"}`;
+  return `Go-live was ${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} ago`;
+}
+
 export function ConversionDetailsForm({ conversion }: { conversion: Conversion }) {
   const router = useRouter();
   const [facilityName, setFacilityName] = useState(conversion.facility_name);
@@ -55,6 +67,9 @@ export function ConversionDetailsForm({ conversion }: { conversion: Conversion }
           value={goLiveDate}
           onChange={(e) => setGoLiveDate(e.target.value)}
         />
+        {goLiveDate && (
+          <span className="hint">{describeGoLiveOffset(goLiveDate)}</span>
+        )}
       </label>
       <button type="button" onClick={handleSave} disabled={saving}>
         {saving ? "Saving…" : "Save"}

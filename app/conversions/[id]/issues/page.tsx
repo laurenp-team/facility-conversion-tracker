@@ -30,6 +30,21 @@ export default async function IssueLogPage({
     notFound();
   }
 
+  // needs_escalation first — those are blocked on something outside your
+  // control and need follow-up soonest. Stable sort preserves the existing
+  // date_logged-desc order within each classification.
+  const classificationRank: Record<string, number> = {
+    needs_escalation: 0,
+    resolvable_onsite: 1,
+  };
+  const openIssues = (issues ?? [])
+    .filter((issue) => !issue.resolved)
+    .sort(
+      (a, b) =>
+        (classificationRank[a.classification ?? ""] ?? 2) -
+        (classificationRank[b.classification ?? ""] ?? 2)
+    );
+
   const issueIds = (issues ?? []).map((issue) => issue.id);
   const commentsByIssueId: Record<string, IssueComment[]> = {};
 
@@ -62,7 +77,7 @@ export default async function IssueLogPage({
         <>
           <h2>Open issues</h2>
           <IssuesTable
-            issues={(issues ?? []).filter((issue) => !issue.resolved)}
+            issues={openIssues}
             commentsByIssueId={commentsByIssueId}
             emptyMessage="No open issues."
           />
