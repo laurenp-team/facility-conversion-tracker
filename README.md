@@ -1,6 +1,6 @@
 # Facility Conversion Tracker
 
-Internal tool for tracking correctional facility software installs ("conversions"). Built from the 5A process design in [`docs/Assignment_5A_Facility_Conversion_App_Design (3).docx`](docs/Assignment_5A_Facility_Conversion_App_Design%20%283%29.docx), scoped down to an MVP per [`docs/5B_Build_Spec.md`](docs/5B_Build_Spec.md).
+Internal tool for tracking correctional facility software installs ("conversions"). Built from the 5A process design in [`docs/Assignment_5A_Facility_Conversion_App_Design.docx`](docs/Assignment_5A_Facility_Conversion_App_Design.docx), scoped down to an MVP per [`docs/5B_Build_Spec.md`](docs/5B_Build_Spec.md).
 
 **Live app:** https://facility-conversion-tracker.vercel.app
 
