@@ -280,58 +280,62 @@ export function DocumentsTable({
                 </td>
                 <td>{formatTimestamp(doc.date_sent)}</td>
                 <td>{formatTimestamp(doc.date_last_reminded)}</td>
-                <td className="row-actions">
-                  <select
-                    value={statusDrafts[doc.id]}
-                    onChange={(e) =>
-                      setStatusDrafts((prev) => ({
-                        ...prev,
-                        [doc.id]: e.target.value as DocumentStatus,
-                      }))
-                    }
-                  >
-                    {STATUSES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateStatus(doc.id)}
-                    disabled={updatingId === doc.id}
-                  >
-                    {updatingId === doc.id ? "Updating…" : "Update status"}
-                  </button>
+                <td>
+                  <div className="row-actions">
+                    <select
+                      value={statusDrafts[doc.id]}
+                      onChange={(e) =>
+                        setStatusDrafts((prev) => ({
+                          ...prev,
+                          [doc.id]: e.target.value as DocumentStatus,
+                        }))
+                      }
+                    >
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateStatus(doc.id)}
+                      disabled={updatingId === doc.id}
+                    >
+                      {updatingId === doc.id ? "Updating…" : "Update status"}
+                    </button>
+                  </div>
                 </td>
-                <td className="row-actions">
-                  {isEditing ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleSaveEdit(doc.id)}
-                        disabled={editSubmitting}
-                      >
-                        {editSubmitting ? "Saving…" : "Save"}
-                      </button>
-                      <button type="button" onClick={handleCancelEdit}>
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button type="button" onClick={() => handleStartEdit(doc)}>
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(doc)}
-                        disabled={deletingId === doc.id}
-                      >
-                        {deletingId === doc.id ? "Deleting…" : "Delete"}
-                      </button>
-                    </>
-                  )}
+                <td>
+                  <div className="row-actions">
+                    {isEditing ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEdit(doc.id)}
+                          disabled={editSubmitting}
+                        >
+                          {editSubmitting ? "Saving…" : "Save"}
+                        </button>
+                        <button type="button" onClick={handleCancelEdit}>
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" onClick={() => handleStartEdit(doc)}>
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(doc)}
+                          disabled={deletingId === doc.id}
+                        >
+                          {deletingId === doc.id ? "Deleting…" : "Delete"}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </td>
               </tr>
             );
