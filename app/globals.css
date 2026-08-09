@@ -209,6 +209,12 @@ button:disabled {
   margin-bottom: 0.5rem;
 }
 
+.issue-edit-textarea {
+  width: 100%;
+  font-family: inherit;
+  margin-bottom: 0.5rem;
+}
+
 .issue-meta {
   display: flex;
   gap: 1rem;
