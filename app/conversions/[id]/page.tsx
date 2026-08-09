@@ -32,11 +32,14 @@ export default async function ConversionRecordPage({
 
       <ConversionDetailsForm conversion={conversion as Conversion} />
 
-      <p className="section-nav">
-        <Link href={`/conversions/${id}/documents`}>Go to Documents &rarr;</Link>
-        {" · "}
-        <Link href={`/conversions/${id}/issues`}>Go to Issue Log &rarr;</Link>
-      </p>
+      <div className="section-nav">
+        <Link className="nav-button" href={`/conversions/${id}/documents`}>
+          Go to Documents &rarr;
+        </Link>
+        <Link className="nav-button" href={`/conversions/${id}/issues`}>
+          Go to Issue Log &rarr;
+        </Link>
+      </div>
     </main>
   );
 }

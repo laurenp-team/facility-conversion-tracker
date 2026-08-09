@@ -150,6 +150,25 @@ button:disabled {
 
 .section-nav {
   margin-top: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid #888;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-button:hover {
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  border-color: var(--foreground);
 }
 
 .error {
