@@ -78,6 +78,13 @@ h2 {
   align-items: flex-end;
 }
 
+/* Facility name / Go-live date row: top-align instead of bottom-align, so
+   the "Go-live was X days ago" hint (which makes that label taller) doesn't
+   push the shorter label's input out of alignment with the other input. */
+.field-row {
+  align-items: flex-start;
+}
+
 .inline-form label,
 .issue-form label {
   display: flex;

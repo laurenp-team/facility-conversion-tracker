@@ -111,7 +111,7 @@ export function ConversionDetailsForm({ conversion }: { conversion: Conversion }
 
   return (
     <div>
-      <div className="inline-form">
+      <div className="inline-form field-row">
         <label>
           Facility name
           <input
