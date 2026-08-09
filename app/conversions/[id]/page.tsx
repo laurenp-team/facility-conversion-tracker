@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import type { Conversion, DocumentRow } from "@/lib/types";
+import type { Conversion } from "@/lib/types";
 import { ConversionDetailsForm } from "./conversion-details-form";
-import { DocumentsTable } from "./documents-table";
 
 export const dynamic = "force-dynamic";
 
@@ -14,19 +13,13 @@ export default async function ConversionRecordPage({
 }) {
   const { id } = await params;
 
-  const [conversionResult, documentsResult] = await Promise.all([
-    supabase.from("conversions").select("*").eq("id", id).single(),
-    supabase
-      .from("documents")
-      .select("*")
-      .eq("conversion_id", id)
-      .order("name"),
-  ]);
+  const { data: conversion, error } = await supabase
+    .from("conversions")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  const conversion = conversionResult.data as Conversion | null;
-  const documents = documentsResult.data as DocumentRow[] | null;
-
-  if (conversionResult.error || !conversion) {
+  if (error || !conversion) {
     notFound();
   }
 
@@ -37,21 +30,11 @@ export default async function ConversionRecordPage({
       </p>
       <h1>Conversion Record</h1>
 
-      <ConversionDetailsForm conversion={conversion} />
-
-      <h2>Documents</h2>
-      {documentsResult.error && (
-        <p className="error">
-          Failed to load documents: {documentsResult.error.message}
-        </p>
-      )}
-      <DocumentsTable
-        conversionId={id}
-        initialDocuments={documents ?? []}
-        goLiveDate={conversion.go_live_date}
-      />
+      <ConversionDetailsForm conversion={conversion as Conversion} />
 
       <p className="section-nav">
+        <Link href={`/conversions/${id}/documents`}>Go to Documents &rarr;</Link>
+        {" · "}
         <Link href={`/conversions/${id}/issues`}>Go to Issue Log &rarr;</Link>
       </p>
     </main>

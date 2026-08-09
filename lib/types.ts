@@ -7,7 +7,18 @@ export interface Conversion {
   facility_name: string;
   go_live_date: string; // ISO date (yyyy-mm-dd)
   created_at: string;
+  main_contact_name: string | null;
+  main_contact_email: string | null;
+  main_contact_phone: string | null;
+  finance_contact_name: string | null;
+  finance_contact_email: string | null;
+  finance_contact_phone: string | null;
+  it_contact_name: string | null;
+  it_contact_email: string | null;
+  it_contact_phone: string | null;
 }
+
+export type ContactRole = "main" | "finance" | "it";
 
 export interface DocumentRow {
   id: string;
